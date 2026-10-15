@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | My Profile</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-private="true">
+
+<header>
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="booking.html">Book</a>
+    <a href="my-bookings.html">My Bookings</a>
+    <button id="logout-button">Logout</button>
+  </nav>
+</header>
+
+<main>
+  <section class="panel">
+    <h1>My Profile</h1>
+    <p id="message" class="message" role="status" hidden></p>
+
+    <p><strong>Account type:</strong> <span id="profile-role">Loading...</span></p>
+    <p><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
+    <p><strong>Member since:</strong> <span id="profile-created">Loading...</span></p>
+
+    <form id="profile-form">
+      <label>Full Name
+        <input type="text" name="full_name" maxlength="120" placeholder="Your name">
+      </label>
+      <button type="submit">Save Name</button>
+    </form>
+  </section>
+</main>
+
+<footer>HomeClean | Academic Demo</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>

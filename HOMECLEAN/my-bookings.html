@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | My Bookings</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body data-private="true">
+
+<header>
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="booking.html">New Booking</a>
+    <a href="profile.html">Profile</a>
+    <button id="logout-button">Logout</button>
+  </nav>
+</header>
+
+<main>
+  <h1>My Bookings</h1>
+  <p>These requests belong to your signed-in account.</p>
+  <div class="demo-notice">Statuses are maintained by the academic developer. No real cleaning appointment is confirmed.</div>
+  <p id="message" class="message" role="status" hidden></p>
+  <h2>My Booking Locations</h2>
+  <div id="bookings-map" class="map"></div>
+  <section id="booking-list" class="private-data">
+    <p>Loading your booking history...</p>
+  </section>
+  <p><a class="button" href="booking.html">Create New Request</a></p>
+</main>
+
+<footer>HomeClean | Academic Demo</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/gis.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>

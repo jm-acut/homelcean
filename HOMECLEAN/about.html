@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | About</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="booking.html" data-auth-link="in" hidden>Book</a>
+    <a href="my-bookings.html" data-auth-link="in" hidden>My Bookings</a>
+    <button id="logout-button" data-auth-link="in" hidden>Logout</button>
+  </nav>
+</header>
+<main>
+  <section class="panel">
+    <h1>About HomeClean</h1>
+    <p>HomeClean is a proposed web-based home cleaning booking and management system created for St. Peter's College SIP 101.</p>
+    <p>The academic prototype demonstrates public service browsing, customer authentication, password recovery, persistent booking records, and owner-based database access.</p>
+    <p>Technologies: HTML, CSS, JavaScript, Supabase Auth, and PostgreSQL.</p>
+    <div class="demo-notice">This project is not a real cleaning company and does not accept real appointments or payments.</div>
+  </section>
+</main>
+<footer>HomeClean | SIP 101 Academic Project</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
