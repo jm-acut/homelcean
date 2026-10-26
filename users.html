@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | Users and Roles</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-private="true">
+
+<header>
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="admin.html" data-role-link="admin" hidden>Admin</a>
+    <a href="users.html" data-role-link="admin-only" hidden>Users</a>
+    <button id="logout-button">Logout</button>
+  </nav>
+</header>
+
+<main class="wide">
+  <h1>Users and Roles</h1>
+  <p class="muted">Customer: can book and see their own bookings. Staff: can also manage bookings and assign cleaners. Admin: everything, including this page.</p>
+  <p id="message" class="message" role="status" hidden></p>
+
+  <section id="denied" class="panel" hidden>
+    <h2>Admins only</h2>
+    <p>This page is only available to admin accounts.</p>
+    <p><a class="button" href="index.html">Back to Home</a></p>
+  </section>
+
+  <div id="users-content" hidden>
+    <div id="user-stats" class="stat-grid"></div>
+
+    <div class="filters">
+      <label>Role
+        <select id="role-filter">
+          <option value="all">All roles</option>
+          <option value="customer">Customers</option>
+          <option value="staff">Staff</option>
+          <option value="admin">Admins</option>
+        </select>
+      </label>
+      <label>Search
+        <input id="search" type="search" placeholder="Name or email">
+      </label>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th class="num">Orders</th>
+            <th class="num">Total spent</th>
+            <th>Last order</th>
+            <th>Joined</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="users-body"></tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <span id="users-count" class="muted"></span>
+      <button type="button" id="users-more" class="secondary" hidden>Show more</button>
+    </div>
+  </div>
+</main>
+
+<footer>HomeClean | Academic Demo</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="js/common.js"></script>
+<script src="js/users.js"></script>
+</body>
+</html>

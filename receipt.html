@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | Receipt</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-private="true">
+
+<header class="no-print">
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="my-bookings.html">My Bookings</a>
+    <a href="admin.html" data-role-link="admin" hidden>Admin</a>
+    <button id="logout-button">Logout</button>
+  </nav>
+</header>
+
+<main>
+  <p id="message" class="message no-print" role="status" hidden></p>
+
+  <section id="receipt" class="receipt" hidden>
+    <div class="receipt-head">
+      <h1>HomeClean</h1>
+      <p class="muted">Receipt (academic demo - not a real receipt)</p>
+    </div>
+
+    <div class="receipt-grid">
+      <div><span class="muted">Receipt no.</span><strong id="r-ref"></strong></div>
+      <div><span class="muted">Issued</span><strong id="r-issued"></strong></div>
+      <div><span class="muted">Customer</span><strong id="r-customer"></strong></div>
+      <div><span class="muted">Phone</span><strong id="r-phone"></strong></div>
+      <div><span class="muted">Service date</span><strong id="r-when"></strong></div>
+      <div><span class="muted">Cleaner</span><strong id="r-cleaner"></strong></div>
+    </div>
+    <p><span class="muted">Address:</span> <span id="r-address"></span></p>
+
+    <div class="table-wrap">
+      <table class="receipt-table">
+        <thead><tr><th>Description</th><th class="num">Amount</th></tr></thead>
+        <tbody id="r-lines"></tbody>
+        <tfoot id="r-total"></tfoot>
+      </table>
+    </div>
+
+    <p><span class="muted">Payment:</span> <strong id="r-payment"></strong></p>
+    <p><span class="muted">Booking status:</span> <strong id="r-status"></strong></p>
+  </section>
+
+  <p class="no-print">
+    <button type="button" id="print-button" hidden>Print receipt</button>
+    <a class="button secondary" href="my-bookings.html">Back to My Bookings</a>
+  </p>
+</main>
+
+<footer class="no-print">HomeClean | Academic Demo</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="js/common.js"></script>
+<script src="js/receipt.js"></script>
+</body>
+</html>
