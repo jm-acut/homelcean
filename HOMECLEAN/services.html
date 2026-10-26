@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HomeClean | Services</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">HomeClean</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="booking.html" data-auth-link="in" hidden>Book</a>
+    <a href="my-bookings.html" data-auth-link="in" hidden>My Bookings</a>
+    <button id="logout-button" data-auth-link="in" hidden>Logout</button>
+  </nav>
+</header>
+<main>
+  <h1>Our Demonstration Services</h1>
+  <p class="muted">These are fictional service descriptions for academic purposes.</p>
+  <div class="cards">
+    <article class="card">
+      <h2>Standard Cleaning</h2>
+      <p>Example of routine home cleaning.</p>
+      <a class="button" href="booking.html">Request Service</a>
+    </article>
+    <article class="card">
+      <h2>Deep Cleaning</h2>
+      <p>Example of a more detailed cleaning request.</p>
+      <a class="button" href="booking.html">Request Service</a>
+    </article>
+    <article class="card">
+      <h2>Move-in/Move-out Cleaning</h2>
+      <p>Example of cleaning associated with moving.</p>
+      <a class="button" href="booking.html">Request Service</a>
+    </article>
+  </div>
+  <h2>Our Location</h2>
+  <p class="muted">Our demo office is marked on the map. We accept requests from any location.</p>
+  <div id="coverage-map" class="map"></div>
+  <div class="demo-notice">The database catalogue controls which services are available for booking. A request does not guarantee availability.</div>
+</main>
+<footer>HomeClean | SIP 101 Academic Project</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/gis.js"></script>
+</body>
+</html>
