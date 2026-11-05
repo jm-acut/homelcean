@@ -24,7 +24,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const message = document.querySelector("#message");
   const gcashFields = document.querySelector("#gcash-fields");
   const gcashInput = form.elements.gcash_number;
-  const submitButton = form.querySelector('button[type="submit"]');
+  const submitButton = document.querySelector("#submit-btn");
+  const cleanerBox = document.querySelector("#cleaner-list");
+  const savedCard = document.querySelector("#saved-card");
+  const detailsBox = document.querySelector("#details-fields");
+  const barTotal = document.querySelector("#bar-total");
+  let chosenCleaner = "";
+  let cleanersData = [];
+  let defaults = null;
 
   let appliedCode = "";   // promo code that is currently applied
   let discount = 0;       // discount for that code
@@ -122,6 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!serviceSelect.value) {
       summary.appendChild(el("p", "Choose a service to see the price.", "muted"));
+      if (barTotal) barTotal.textContent = peso(0);
       return;
     }
 
@@ -134,7 +142,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     line("Service", peso(servicePrice()));
     if (addonsTotal() > 0) line("Add-ons", peso(addonsTotal()));
     if (discount > 0) line("Promo " + appliedCode, "-" + peso(discount), "summary-discount");
-    line("Total", peso(Math.max(servicePrice() + addonsTotal() - discount, 0)), "summary-total");
+    const total = Math.max(servicePrice() + addonsTotal() - discount, 0);
+    line("Total", peso(total), "summary-total");
+    if (barTotal) barTotal.textContent = peso(total);
   }
 
   async function refreshPrice() {
@@ -191,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ---------- Free time slots ----------
   async function refreshSlots() {
-    const taken = await takenSlots(dateInput.value);
+    const taken = await takenSlots(dateInput.value, null, chosenCleaner);
     fillTimeSelect(timeSelect, taken, true);
   }
 
@@ -212,6 +222,97 @@ document.addEventListener("DOMContentLoaded", async () => {
     .querySelectorAll('input[name="payment_method"]')
     .forEach((r) => r.addEventListener("change", updatePaymentUI));
 
+  // ---------- Saved details (filled in from the profile) ----------
+  async function loadDefaults() {
+    const { data } = await supabaseClient
+      .from("profiles")
+      .select("full_name, phone, address, latitude, longitude")
+      .eq("id", sessionData.session.user.id)
+      .maybeSingle();
+    defaults = data;
+    applyDefaults();
+  }
+
+  function applyDefaults() {
+    const p = defaults;
+    const complete = !!(p && p.full_name && p.phone && p.address && p.latitude != null);
+
+    if (p) {
+      if (p.full_name) form.elements.customer_name.value = p.full_name;
+      if (p.phone) form.elements.phone.value = p.phone;
+      if (p.address) form.elements.address.value = p.address;
+      if (p.latitude != null && p.longitude != null && window.homecleanMap) {
+        window.homecleanMap.setPin(p.latitude, p.longitude);
+      }
+    }
+
+    savedCard.hidden = !complete;
+    detailsBox.open = !complete;
+    if (complete) {
+      savedCard.replaceChildren(
+        el("strong", p.full_name + " \u00b7 " + p.phone),
+        el("span", p.address)
+      );
+    }
+  }
+
+  detailsBox.addEventListener("toggle", () => {
+    if (detailsBox.open && window.homecleanMap) window.homecleanMap.refresh();
+  });
+
+  // ---------- Choose your cleaner ----------
+  async function loadCleaners() {
+    const { data } = await supabaseClient.rpc("list_cleaners");
+    cleanersData = data || [];
+    renderCleaners([]);
+  }
+
+  function renderCleaners(busy) {
+    cleanerBox.replaceChildren();
+
+    const card = (id, name, meta, off) => {
+      const label = el("label", undefined, "pick" + (off ? " pick-off" : ""));
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "cleaner";
+      radio.value = id;
+      radio.disabled = off;
+      radio.checked = chosenCleaner === id;
+      radio.addEventListener("change", () => { chosenCleaner = id; refreshSlots(); });
+      const text = el("span", undefined, "pick-text");
+      text.append(el("strong", name), el("small", meta));
+      label.append(radio, el("span", name.charAt(0).toUpperCase(), "avatar"), text);
+      return label;
+    };
+
+    cleanerBox.appendChild(card("", "Any available cleaner", "We pick one for you", false));
+    cleanersData.forEach((c) => {
+      const rating = c.avg_rating ? "\u2605 " + Number(c.avg_rating).toFixed(1) : "New";
+      const isBusy = busy.includes(c.cleaner_id);
+      cleanerBox.appendChild(card(
+        c.cleaner_id, c.name,
+        rating + " \u00b7 " + c.jobs + " jobs" + (isBusy ? " \u00b7 busy at this time" : ""),
+        isBusy
+      ));
+    });
+  }
+
+  async function refreshCleaners() {
+    let busy = [];
+    if (dateInput.value && timeSelect.value) {
+      const { data } = await supabaseClient.rpc("busy_cleaners", {
+        p_date: dateInput.value,
+        p_time: timeSelect.value
+      });
+      busy = data || [];
+    }
+    if (busy.includes(chosenCleaner)) chosenCleaner = "";
+    renderCleaners(busy);
+  }
+
+  dateInput.addEventListener("change", refreshCleaners);
+  timeSelect.addEventListener("change", refreshCleaners);
+
   // ---------- Start ----------
   try {
     await loadServices();
@@ -219,6 +320,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayMessage("Could not load services: " + error.message, "error");
   }
   await loadAddons();
+  await loadDefaults();
+  await loadCleaners();
   updatePaymentUI();
   renderSummary();
 
@@ -276,13 +379,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         p_lat: lat,
         p_lng: lng,
         p_addon_ids: selectedAddons().map((b) => b.value),
-        p_promo: appliedCode
+        p_promo: appliedCode,
+        p_cleaner_id: chosenCleaner || null
       });
 
       if (error) throw error;
 
       form.reset();
+      chosenCleaner = "";
       if (window.homecleanMap) window.homecleanMap.clear();
+      applyDefaults();
+      await refreshCleaners();
       appliedCode = "";
       discount = 0;
       setPromoMessage("", "ok");

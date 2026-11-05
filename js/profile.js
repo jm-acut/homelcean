@@ -1,4 +1,4 @@
-// Profile: account details, change name, and a summary of my orders
+// Profile: account details, saved details, and a summary of my orders
 document.addEventListener("DOMContentLoaded", async () => {
   const { peso, el, timeLabel, dateLabel, STATUS_LABELS } = HC;
 
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const { data: profile, error } = await supabaseClient
     .from("profiles")
-    .select("email, full_name, role, created_at")
+    .select("email, full_name, role, created_at, phone, address, latitude, longitude")
     .eq("id", session.user.id)
     .single();
 
@@ -30,16 +30,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     profile.email || session.user.email;
   document.getElementById("profile-created").textContent =
     new Date(profile.created_at).toLocaleDateString("en-PH");
-  document.getElementById("profile-form").elements.full_name.value = profile.full_name || "";
+  const pf = document.getElementById("profile-form");
+  pf.elements.full_name.value = profile.full_name || "";
+  pf.elements.phone.value = profile.phone || "";
+  pf.elements.address.value = profile.address || "";
+  if (profile.latitude != null && profile.longitude != null && window.homecleanMap) {
+    window.homecleanMap.setPin(profile.latitude, profile.longitude);
+  }
 
-  document.getElementById("profile-form").addEventListener("submit", async (e) => {
+  pf.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const full_name = e.target.elements.full_name.value.trim();
+    const f = e.target.elements;
+    const lat = parseFloat(f.latitude.value);
+    const lng = parseFloat(f.longitude.value);
     const { error } = await supabaseClient
       .from("profiles")
-      .update({ full_name })
+      .update({
+        full_name: f.full_name.value.trim(),
+        phone: f.phone.value.trim() || null,
+        address: f.address.value.trim() || null,
+        latitude: Number.isNaN(lat) ? null : lat,
+        longitude: Number.isNaN(lng) ? null : lng
+      })
       .eq("id", session.user.id);
-    error ? show("Could not save your name.", "error") : show("Name saved.", "success");
+    error
+      ? show("Could not save: " + error.message, "error")
+      : show("Saved. New bookings will use these details.", "success");
   });
 
   // ---------- My activity ----------

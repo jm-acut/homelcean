@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HomeClean | My Profile</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body data-private="true">
 
@@ -29,11 +30,28 @@
     <p><strong>Member since:</strong> <span id="profile-created">Loading...</span></p>
 
     <form id="profile-form">
+      <h2>My saved details</h2>
+      <p class="muted">These fill in your bookings automatically.</p>
       <label>Full Name
         <input type="text" name="full_name" maxlength="120" placeholder="Your name">
       </label>
-      <button type="submit">Save Name</button>
+      <label>Mobile Number
+        <input type="tel" name="phone" placeholder="09171234567" pattern="09[0-9]{9}" maxlength="11">
+      </label>
+      <label>Home Address
+        <textarea name="address" rows="2" maxlength="500"></textarea>
+      </label>
+      <div class="location-box">
+        <strong>Pin your location (tap the map or drag the pin)</strong>
+        <div id="profile-map" class="map" data-map-picker></div>
+        <p data-map-status class="muted">No location selected yet.</p>
+        <button type="button" data-locate class="secondary">Use my current location</button>
+        <input type="hidden" name="latitude">
+        <input type="hidden" name="longitude">
+      </div>
+      <button type="submit">Save details</button>
     </form>
+    <button type="button" class="secondary js-logout">Log out</button>
   </section>
 
   <section class="section-gap">
@@ -65,6 +83,8 @@
 <script src="js/supabase-client.js"></script>
 <script src="js/app.js"></script>
 <script src="js/common.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/gis.js"></script>
 <script src="js/profile.js"></script>
 </body>
 </html>
