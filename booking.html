@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HomeClean | Booking</title>
+  <title>HomeClean | Book a Clean</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
-<body data-private="true">
+<body data-private="true" class="has-actionbar">
 
 <header>
   <a class="brand" href="index.html">HomeClean</a>
@@ -21,86 +21,93 @@
 </header>
 <main>
   <section class="panel">
-    <h1>Request a Cleaning Service</h1>
-    <div class="demo-notice">Use fictional details only. This form does not book a real cleaner.</div>
+    <h1>Book a clean</h1>
+    <div class="demo-notice">Demo only. No real cleaner is booked and no real money moves.</div>
     <p id="message" class="message" role="status" hidden></p>
     <form id="booking-form">
-      <label>Service
-        <select id="service_id" name="service_id" required>
-          <option value="">Loading services...</option>
-        </select>
-      </label>
 
-      <fieldset class="gcash-box">
-        <legend>Add-ons (optional)</legend>
+      <div class="step">
+        <h2><span data-icon="sparkles"></span> 1. What do you need?</h2>
+        <label>Service
+          <select id="service_id" name="service_id" required>
+            <option value="">Loading services...</option>
+          </select>
+        </label>
         <div id="addons-list"><p class="muted">Loading add-ons...</p></div>
-      </fieldset>
-
-      <label>Customer Name
-        <input name="customer_name" maxlength="120" required>
-      </label>
-      <label>Philippine Mobile Number
-        <input name="phone" type="tel" placeholder="09171234567" pattern="09[0-9]{9}" required>
-      </label>
-      <label>Fictional Cleaning Address
-        <textarea name="address" maxlength="500" rows="3" required></textarea>
-      </label>
-      <div class="location-box">
-        <strong>Cleaning Location (click the map or drag the pin)</strong>
-        <div id="booking-map" class="map"></div>
-        <p id="map-status" class="muted">No location selected yet.</p>
-        <button type="button" id="locate-me" class="secondary">Use my current location</button>
-        <input type="hidden" name="latitude">
-        <input type="hidden" name="longitude">
       </div>
-      <label>Preferred Date
-        <input name="preferred_date" id="preferred_date" type="date" required>
-      </label>
-      <label>Preferred Time
-        <select name="preferred_time" id="preferred_time" required>
-          <option value="">Choose a time</option>
-        </select>
-      </label>
-      <p id="slot-hint" class="muted">Times marked "taken" are already booked for that date.</p>
-      <label>Additional Notes (Optional)
-        <textarea name="notes" maxlength="1000" rows="3"></textarea>
-      </label>
 
-      <fieldset class="gcash-box">
-        <legend>Promo code</legend>
+      <div class="step">
+        <h2><span data-icon="pin"></span> 2. Where?</h2>
+        <div id="saved-card" class="saved-card" hidden></div>
+        <details id="details-fields" class="more">
+          <summary>Change name, phone or address</summary>
+          <label>Your name
+            <input name="customer_name" maxlength="120" required>
+          </label>
+          <label>Mobile number
+            <input name="phone" type="tel" placeholder="09171234567" pattern="09[0-9]{9}" required>
+          </label>
+          <label>Address
+            <textarea name="address" maxlength="500" rows="2" required></textarea>
+          </label>
+          <div class="location-box">
+            <strong>Pin your location (tap the map or drag the pin)</strong>
+            <div id="booking-map" class="map" data-map-picker></div>
+            <p data-map-status class="muted">No location selected yet.</p>
+            <button type="button" data-locate class="secondary">Use my current location</button>
+            <input type="hidden" name="latitude">
+            <input type="hidden" name="longitude">
+          </div>
+        </details>
+      </div>
+
+      <div class="step">
+        <h2><span data-icon="calendar"></span> 3. When?</h2>
+        <label>Date
+          <input name="preferred_date" id="preferred_date" type="date" required>
+        </label>
+        <label>Time
+          <select name="preferred_time" id="preferred_time" required>
+            <option value="">Choose a time</option>
+          </select>
+        </label>
+        <p class="muted">Times marked "taken" have no cleaner free.</p>
+      </div>
+
+      <div class="step">
+        <h2><span data-icon="user"></span> 4. Choose your cleaner</h2>
+        <div id="cleaner-list" class="pick-list"></div>
+      </div>
+
+      <div class="step">
+        <h2><span data-icon="card"></span> 5. Pay</h2>
         <div class="promo-row">
-          <input id="promo-code" type="text" placeholder="Enter a code (try WELCOME10)" maxlength="30" autocomplete="off">
+          <input id="promo-code" type="text" placeholder="Promo code (try WELCOME10)" maxlength="30" autocomplete="off">
           <button type="button" id="apply-promo" class="secondary">Apply</button>
         </div>
         <p id="promo-message" class="muted" hidden></p>
-      </fieldset>
-
-      <fieldset class="gcash-box">
-        <legend>Payment</legend>
         <div id="price-summary" class="summary"><p class="muted">Choose a service to see the price.</p></div>
-
-        <label class="radio">
-          <input type="radio" name="payment_method" value="gcash" checked>
-          Pay with GCash now
-        </label>
-        <label class="radio">
-          <input type="radio" name="payment_method" value="cash">
-          Pay cash on the service day
-        </label>
-
+        <label class="radio"><input type="radio" name="payment_method" value="gcash" checked> GCash (simulated)</label>
+        <label class="radio"><input type="radio" name="payment_method" value="cash"> Cash on the service day</label>
         <div id="gcash-fields">
-          <label>GCash Mobile Number
+          <label>GCash mobile number
             <input name="gcash_number" type="tel" placeholder="09171234567" pattern="09[0-9]{9}" maxlength="11" autocomplete="off" required>
           </label>
-          <p class="muted">Demo only. No real money is charged. Never enter your real MPIN or OTP.</p>
+          <p class="muted">Demo only. Never enter a real MPIN or OTP.</p>
         </div>
-      </fieldset>
-
-      <button type="submit" class="gcash-btn">Pay with GCash &amp; Book</button>
+        <label>Notes for the cleaner (optional)
+          <textarea name="notes" maxlength="1000" rows="2"></textarea>
+        </label>
+      </div>
     </form>
-    <p><a href="my-bookings.html">View My Bookings</a></p>
   </section>
 </main>
+
+<div class="action-bar">
+  <div><small>Total</small><strong id="bar-total">&#8369;0.00</strong></div>
+  <button type="submit" form="booking-form" id="submit-btn" class="gcash-btn">Pay with GCash &amp; Book</button>
+</div>
+
 <footer>HomeClean | Academic Demo</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>

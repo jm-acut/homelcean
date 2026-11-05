@@ -20,19 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
       button.disabled = true;
 
       try {
-        const fullName = signupForm.elements.fullName.value.trim();
-        const email = signupForm.elements.email.value.trim();
-        const password = signupForm.elements.password.value;
-        const confirmPassword = signupForm.elements.confirmPassword.value;
+        const f = signupForm.elements;
+        const fullName = f.fullName.value.trim();
+        const phone = f.phone.value.trim();
+        const address = f.address.value.trim();
+        const email = f.email.value.trim();
+        const password = f.password.value;
+        const confirmPassword = f.confirmPassword.value;
 
-        if (!fullName) {
-          throw new Error("Please enter your full name.");
+        if (!fullName) throw new Error("Please enter your full name.");
+        if (!/^09[0-9]{9}$/.test(phone)) {
+          throw new Error("Enter a valid mobile number like 09171234567.");
         }
-
+        if (!address) throw new Error("Please enter your address.");
         if (password.length < 8) {
           throw new Error("Use a password with at least 8 characters.");
         }
-
         if (password !== confirmPassword) {
           throw new Error("Passwords do not match.");
         }
@@ -42,18 +45,20 @@ document.addEventListener("DOMContentLoaded", () => {
           password,
           options: {
             emailRedirectTo: window.location.origin + "/signin.html",
-            data: { full_name: fullName }
+            data: {
+              full_name: fullName,
+              phone,
+              address,
+              latitude: f.latitude.value,
+              longitude: f.longitude.value
+            }
           }
         });
 
         if (error) throw error;
 
         if (data.session) {
-          showMessage(
-            message,
-            "Customer account created. You are signed in.",
-            "success"
-          );
+          showMessage(message, "Customer account created. You are signed in.", "success");
         } else {
           showMessage(
             message,

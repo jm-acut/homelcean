@@ -27,18 +27,24 @@
     return map;
   }
 
-  // ---------- 1. Location picker on booking.html ----------
+  // ---------- 1. Location picker (sign-up, profile, booking) ----------
   let pickerMap = null;
   let pin = null;
 
+  let pickerForm = null;
+  let pickerStatus = null;
+  let pickerSet = null;
+
   function initPicker() {
-    const el = document.getElementById("booking-map");
-    const form = document.getElementById("booking-form");
+    const el = document.querySelector("[data-map-picker]");
+    const form = el && el.closest("form");
     if (!el || !form || !window.L) return;
 
-    const status = document.getElementById("map-status");
-    const locateButton = document.getElementById("locate-me");
-    pickerMap = makeMap("booking-map");
+    pickerForm = form;
+    pickerStatus = form.querySelector("[data-map-status]");
+    const locateButton = form.querySelector("[data-locate]");
+    const status = pickerStatus;
+    pickerMap = makeMap(el.id);
 
     function setPin(lat, lng) {
       const d = distanceKm(lat, lng, BASE.lat, BASE.lng);
@@ -56,28 +62,31 @@
         pin.setLatLng([lat, lng]);
       }
 
-      status.textContent =
-        "Selected: " + lat.toFixed(5) + ", " + lng.toFixed(5) +
-        " (" + d.toFixed(1) + " km from our office)";
-      status.className = "muted";
+      if (status) {
+        status.textContent =
+          "Selected: " + lat.toFixed(5) + ", " + lng.toFixed(5) +
+          " (" + d.toFixed(1) + " km from our office)";
+        status.className = "muted";
+      }
     }
+    pickerSet = setPin;
 
     pickerMap.on("click", (e) => setPin(e.latlng.lat, e.latlng.lng));
 
     if (locateButton) {
       locateButton.addEventListener("click", () => {
         if (!navigator.geolocation) {
-          status.textContent = "Your browser does not support location.";
+          if (status) status.textContent = "Your browser does not support location.";
           return;
         }
-        status.textContent = "Finding your location...";
+        if (status) status.textContent = "Finding your location...";
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             setPin(pos.coords.latitude, pos.coords.longitude);
             pickerMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
           },
           () => {
-            status.textContent =
+            if (status) status.textContent =
               "Could not get your location. Click the map to place the pin instead.";
           }
         );
@@ -86,20 +95,18 @@
   }
 
   function clear() {
-    const form = document.getElementById("booking-form");
-    const status = document.getElementById("map-status");
     if (pin && pickerMap) {
       pickerMap.removeLayer(pin);
       pin = null;
       pickerMap.setView([BASE.lat, BASE.lng], 11);
     }
-    if (form && form.elements.latitude) {
-      form.elements.latitude.value = "";
-      form.elements.longitude.value = "";
+    if (pickerForm && pickerForm.elements.latitude) {
+      pickerForm.elements.latitude.value = "";
+      pickerForm.elements.longitude.value = "";
     }
-    if (status) {
-      status.textContent = "No location selected yet.";
-      status.className = "muted";
+    if (pickerStatus) {
+      pickerStatus.textContent = "No location selected yet.";
+      pickerStatus.className = "muted";
     }
   }
 
@@ -158,5 +165,13 @@
     initCoverage();
   });
 
-  window.homecleanMap = { clear, showBookings, BASE };
+  window.homecleanMap = {
+    clear, showBookings, BASE,
+    setPin: (lat, lng) => {
+      if (!pickerSet) return;
+      pickerSet(lat, lng);
+      pickerMap.setView([lat, lng], 15);
+    },
+    refresh: () => { if (pickerMap) pickerMap.invalidateSize(); }
+  };
 })();

@@ -78,13 +78,15 @@ window.HC = (function () {
     if (current && !taken.includes(current)) select.value = current;
   }
 
-  async function takenSlots(date, excludeId) {
+    async function takenSlots(date, excludeId, cleanerId) {
     if (!date) return [];
     const args = { p_date: date };
     if (excludeId) args.p_exclude = excludeId;
+    if (cleanerId) args.p_cleaner = cleanerId;
     const { data, error } = await supabaseClient.rpc("taken_slots", args);
     return error || !Array.isArray(data) ? [] : data;
   }
+  
 
   return {
     TIME_SLOTS, STATUS_LABELS, peso, el, showToast,
